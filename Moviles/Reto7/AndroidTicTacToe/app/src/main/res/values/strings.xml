@@ -1,0 +1,26 @@
+<resources>
+    <string name="app_name">Android Tic-Tac-Toe</string>
+    <string name="difficulty_choose">Choose a difficulty level :</string>
+    <string name="difficulty_easy">Easy</string>
+    <string name="difficulty_harder">Harder</string>
+    <string name="difficulty_expert">Expert</string>
+    <string name="quit_question">Are you sure you want to quit ?</string>
+    <string name="yes">Yes</string>
+    <string name="no">No</string>
+    <string name="turn_computer">It\'s Android\'s turn.</string>
+    <string name="turn_human">It\'s your turn.</string>
+    <string name="result_tie">It\'s a tie.</string>
+    <string name="result_human_wins">You won !</string>
+    <string name="result_computer_wins">Android won !</string>
+    <string name="first_human">You go first.</string>
+    <string name="_1">1</string>
+    <string name="_2">2</string>
+    <string name="_3">3</string>
+    <string name="_4">4</string>
+    <string name="_5">5</string>
+    <string name="_6">6</string>
+    <string name="_7">7</string>
+    <string name="_8">8</string>
+    <string name="_9">9</string>
+    <string name="info">info</string>
+</resources>
