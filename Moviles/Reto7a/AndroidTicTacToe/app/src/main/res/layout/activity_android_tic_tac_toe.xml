@@ -13,9 +13,22 @@
         android:layout_marginTop="5dp"/>
 
     <TextView
-        android:id="@+id/information"           android:layout_width="fill_parent"
-        android:layout_height="wrap_content"    android:text="@string/info"
-        android:gravity="center_horizontal"     android:layout_marginTop="20dp"
+        android:id="@+id/player_id"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:layout_marginTop="20dp"
+        android:gravity="center_horizontal"
+        android:paddingBottom="15dp"
+        android:text="info"
+        android:textSize="20dp" />
+
+    <TextView
+        android:id="@+id/information"
+        android:layout_width="fill_parent"
+        android:layout_height="wrap_content"
+        android:text="@string/info"
+        android:gravity="center_horizontal"
+        android:layout_marginTop="20dp"
         android:textSize="20sp"
     />
 </LinearLayout>

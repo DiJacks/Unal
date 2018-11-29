@@ -1,38 +1,72 @@
 package tictactoe.harding.edu.androidtic_tac_toe;
 
+import android.app.Activity;
 import android.content.Intent;
 import android.os.Bundle;
-import android.app.Activity;
 import android.support.annotation.NonNull;
+import android.support.v7.widget.LinearLayoutManager;
+import android.support.v7.widget.RecyclerView;
+import android.util.Log;
 import android.view.Menu;
 import android.view.MenuInflater;
 import android.view.MenuItem;
-import android.view.View;
-import android.widget.Button;
-import android.widget.LinearLayout;
 
-import com.google.firebase.database.DataSnapshot;
-import com.google.firebase.database.DatabaseError;
-import com.google.firebase.database.DatabaseReference;
-import com.google.firebase.database.FirebaseDatabase;
-import com.google.firebase.database.ValueEventListener;
+import com.google.android.gms.tasks.OnFailureListener;
+import com.google.android.gms.tasks.OnSuccessListener;
+import com.google.firebase.firestore.DocumentChange;
+import com.google.firebase.firestore.DocumentReference;
+import com.google.firebase.firestore.EventListener;
+import com.google.firebase.firestore.FirebaseFirestore;
+import com.google.firebase.firestore.FirebaseFirestoreException;
+import com.google.firebase.firestore.QuerySnapshot;
 
+import java.util.ArrayList;
 import java.util.LinkedList;
-import java.util.List;
+
+import javax.annotation.Nullable;
 
 public class MainActivity extends Activity {
 
-    private DatabaseReference mDatabase;
+    private static final String TAG = "MainActivity";
     private LinkedList<TicTacToeGame> mGames;
-    private int gameNumber = 1;
+    private FirebaseFirestore mDatabase;
+    private ArrayList<String> mListGame;
 
     @Override
     protected void onCreate(Bundle savedInstanceState) {
         super.onCreate(savedInstanceState);
         setContentView(R.layout.activity_main);
 
-        mDatabase = FirebaseDatabase.getInstance().getReference();
+        mDatabase = FirebaseFirestore.getInstance();
+        mListGame = new ArrayList<>();
 
+        mDatabase.collection("games").addSnapshotListener(new EventListener<QuerySnapshot>() {
+            @Override
+            public void onEvent(@Nullable QuerySnapshot queryDocumentSnapshots, @Nullable FirebaseFirestoreException e) {
+                if (e != null){
+                    Log.w(TAG, "onEvent: listen:error", e);
+                }
+                else{
+                    for (DocumentChange dc : queryDocumentSnapshots.getDocumentChanges()) {
+                        switch (dc.getType()) {
+                            case ADDED:
+                                if (dc.getDocument().get("mDispo") != null && dc.getDocument().get("mDispo").equals(true)) {
+                                    mListGame.add(dc.getDocument().getId());
+                                }
+                                break;
+                            case REMOVED:
+                                mListGame.remove(dc.getDocument().getId());
+                                break;
+                            case MODIFIED:
+                                if (dc.getDocument().get("mDispo") != null && dc.getDocument().get("mDispo").equals(false))
+                                    mListGame.remove(dc.getDocument().getId());
+
+                        }
+                    }
+                    initRecyclerView(mListGame);
+                }
+            }
+        });
     }
 
     @Override
@@ -49,39 +83,33 @@ public class MainActivity extends Activity {
         switch (item.getItemId()) {
             case R.id.add_game:
                 //create object in database
-                TicTacToeGame newGame = new TicTacToeGame();
-                mDatabase.child("games").child("game "+ gameNumber).setValue(newGame);
-
-                //create the good number of button
-                ValueEventListener gameListener = new ValueEventListener() {
-                    @Override
-                    public void onDataChange(@NonNull DataSnapshot dataSnapshot) {
-                        mGames = (LinkedList<TicTacToeGame>) dataSnapshot.getValue();
-                        printButtons();
-                    }
-
-                    @Override
-                    public void onCancelled(@NonNull DatabaseError databaseError) {
-
-                    }
-                };
+                TicTacToeGame mGame = new TicTacToeGame("ola");
+                mDatabase.collection("games").add(mGame)
+                        .addOnSuccessListener(new OnSuccessListener<DocumentReference>() {
+                            @Override
+                            public void onSuccess(DocumentReference documentReference) {
+                                Intent intent = new Intent(MainActivity.this, AndroidTicTacToeActivity.class);
+                                intent.putExtra("gameID", documentReference.getId());
+                                MainActivity.this.startActivity(intent);
+                            }
+                        })
+                        .addOnFailureListener(new OnFailureListener() {
+                            @Override
+                            public void onFailure(@NonNull Exception e) {
+                            }
+                        });
+                initRecyclerView(mListGame);
+                return true;
         }
         return false;
     }
 
-    private void printButtons(){
-        LinearLayout layout = findViewById(R.id.main_layout);
-        for (TicTacToeGame game : mGames){
-            Button newButton = new Button(this);
-            newButton.setText("Game " + gameNumber);
-            newButton.setOnClickListener(new View.OnClickListener() {
-                @Override
-                public void onClick(View view) {
-                    startActivity(new Intent(MainActivity.this, AndroidTicTacToeActivity.class));
-                }
-            });
-            layout.addView(newButton);
-        }
+
+    private void initRecyclerView(ArrayList<String> list){
+        RecyclerView recyclerView = findViewById(R.id.recycler_view);
+        RecyclerViewAdapter adapter = new RecyclerViewAdapter(list, this);
+        recyclerView.setAdapter(adapter);
+        recyclerView.setLayoutManager(new LinearLayoutManager(this));
     }
 
 }

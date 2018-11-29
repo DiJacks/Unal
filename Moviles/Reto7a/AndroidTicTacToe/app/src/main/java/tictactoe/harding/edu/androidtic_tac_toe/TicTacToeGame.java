@@ -7,96 +7,117 @@ package tictactoe.harding.edu.androidtic_tac_toe;
  * is X and the computer is O.
  */
 
+import java.util.ArrayList;
 import java.util.Random;
 
 public class TicTacToeGame {
 
-    private char mBoard[] = {'1','2','3','4','5','6','7','8','9'};
-
+    private boolean mDispo;
+    private ArrayList<String> mBoardList;
     public static final int BOARD_SIZE = 9;
 
-    public static final char HUMAN_PLAYER = 'X';
-    public static final char COMPUTER_PLAYER = 'O';
-    public static final char OPEN_SPOT = ' ';
+    public static final Character HUMAN_PLAYER = 'X';
+    public static final Character COMPUTER_PLAYER = 'O';
+    public static final Character OPEN_SPOT = ' ';
 
-    public void setBoardState(char[] boards) {
-        this.mBoard = boards;
+    private static String nameGame;
+
+    private boolean J1turn;
+    private boolean gameOver;
+    private boolean p2arrived;
+
+
+
+    public TicTacToeGame(String nameGame) {
+        nameGame = nameGame;
+        mDispo = true;
+
+        J1turn = true;
+        gameOver = true;
+        p2arrived = false;
+        mBoardList = new ArrayList<String>();
+        for(int i=0;i<BOARD_SIZE;i++)
+            mBoardList.add(OPEN_SPOT.toString());
+    }
+
+    public boolean getmDispo() {
+        return mDispo;
+    }
+
+    /**
+     * Clear the board of all X and 0 by setting all spots to OPEN_SPOT
+     */
+    public void clearBoard(){
+        for(int i=0; i<BOARD_SIZE; i++){
+            mBoardList.set(i,OPEN_SPOT.toString());
+        }
+    }
+
+    /**
+     * Set the given player at the given location on the game board
+     * the location must be available, or the board will not be changed
+     *
+     * @param player - the HUMAN_PLAYER or COMPUTER_PLAYER
+     * @param location - the location (0-8) to place the move
+     */
+    public boolean setMove(char player, int location){
+        if(location <=8 && location >= 0 && mBoardList.get(location).equals(OPEN_SPOT.toString())){
+            mBoardList.set(location,"" + player);
+            return true;
+        }
+        return false;
     }
 
 
-    //Computer Difficulty Level
-    public enum DificultyLevel {Expert, Harder, Easy};
-
-    //Current difficulty Level
-    private DificultyLevel mDificultyLevel = DificultyLevel.Expert;
-
-    private Random mRand;
-
-    public TicTacToeGame() {
-
-        // Seed the random number generator
-        mRand = new Random();
-        clearBoard();
-    }
-
-    public DificultyLevel getmDificultyLevel() {
-        return mDificultyLevel;
-    }
-
-    public void setmDificultyLevel(DificultyLevel mDificultyLevel) {
-        this.mDificultyLevel = mDificultyLevel;
-    }
-
-    // Check for a winner.  Return
-    //  0 if no winner or tie yet
-    //  1 if it's a tie
-    //  2 if X won
-    //  3 if O won
-    public int checkForWinner() {
+    /**
+     * Check for a winner and return status value indicating who has won
+     * @return 0 if no winner or tie yet, 1 if it's a tie, 2 if X won, 3 if 0 won
+     */
+    public int checkForWinner(){
         // Check horizontal wins
         for (int i = 0; i <= 6; i += 3)	{
-            if (mBoard[i] == HUMAN_PLAYER &&
-                    mBoard[i+1] == HUMAN_PLAYER &&
-                    mBoard[i+2]== HUMAN_PLAYER)
+            if (mBoardList.get(i).equals(HUMAN_PLAYER.toString()) &&
+                    mBoardList.get(i+1).equals(HUMAN_PLAYER.toString()) &&
+                    mBoardList.get(i+2).equals(HUMAN_PLAYER.toString()))
                 return 2;
-            if (mBoard[i] == COMPUTER_PLAYER &&
-                    mBoard[i+1]== COMPUTER_PLAYER &&
-                    mBoard[i+2] == COMPUTER_PLAYER)
+            if (mBoardList.get(i).equals(COMPUTER_PLAYER.toString()) &&
+                    mBoardList.get(i+1).equals(COMPUTER_PLAYER.toString()) &&
+                    mBoardList.get(i+2).equals(COMPUTER_PLAYER.toString()))
                 return 3;
         }
 
         // Check vertical wins
         for (int i = 0; i <= 2; i++) {
-            if (mBoard[i] == HUMAN_PLAYER &&
-                    mBoard[i+3] == HUMAN_PLAYER &&
-                    mBoard[i+6]== HUMAN_PLAYER)
+            if (mBoardList.get(i).equals(HUMAN_PLAYER.toString()) &&
+                    mBoardList.get(i+3).equals(HUMAN_PLAYER.toString()) &&
+                    mBoardList.get(i+6).equals(HUMAN_PLAYER.toString()))
                 return 2;
-            if (mBoard[i] == COMPUTER_PLAYER &&
-                    mBoard[i+3] == COMPUTER_PLAYER &&
-                    mBoard[i+6]== COMPUTER_PLAYER)
+            if (mBoardList.get(i).equals(COMPUTER_PLAYER.toString()) &&
+                    mBoardList.get(i+3).equals(COMPUTER_PLAYER.toString()) &&
+                    mBoardList.get(i+6).equals(COMPUTER_PLAYER.toString()))
                 return 3;
         }
 
         // Check for diagonal wins
-        if ((mBoard[0] == HUMAN_PLAYER &&
-                mBoard[4] == HUMAN_PLAYER &&
-                mBoard[8] == HUMAN_PLAYER) ||
-                (mBoard[2] == HUMAN_PLAYER &&
-                        mBoard[4] == HUMAN_PLAYER &&
-                        mBoard[6] == HUMAN_PLAYER))
+        if ((mBoardList.get(0).equals(HUMAN_PLAYER.toString()) &&
+                mBoardList.get(4).equals(HUMAN_PLAYER.toString()) &&
+                mBoardList.get(8).equals(HUMAN_PLAYER.toString())) ||
+                (mBoardList.get(2).equals(HUMAN_PLAYER.toString()) &&
+                        mBoardList.get(4).equals(HUMAN_PLAYER.toString()) &&
+                        mBoardList.get(6).equals(HUMAN_PLAYER.toString())))
             return 2;
-        if ((mBoard[0] == COMPUTER_PLAYER &&
-                mBoard[4] == COMPUTER_PLAYER &&
-                mBoard[8] == COMPUTER_PLAYER) ||
-                (mBoard[2] == COMPUTER_PLAYER &&
-                        mBoard[4] == COMPUTER_PLAYER &&
-                        mBoard[6] == COMPUTER_PLAYER))
+        if ((mBoardList.get(0).equals(COMPUTER_PLAYER.toString()) &&
+                mBoardList.get(4).equals(COMPUTER_PLAYER.toString()) &&
+                mBoardList.get(8).equals(COMPUTER_PLAYER.toString())) ||
+                (mBoardList.get(2).equals(COMPUTER_PLAYER.toString()) &&
+                        mBoardList.get(4).equals(COMPUTER_PLAYER.toString()) &&
+                        mBoardList.get(6).equals(COMPUTER_PLAYER.toString())))
             return 3;
 
         // Check for tie
         for (int i = 0; i < BOARD_SIZE; i++) {
             // If we find a number, then no one has won yet
-            if (mBoard[i] != HUMAN_PLAYER && mBoard[i] != COMPUTER_PLAYER)
+            if (!mBoardList.get(i).equals(HUMAN_PLAYER.toString()) && !mBoardList.get(i).equals(COMPUTER_PLAYER.toString()))
                 return 0;
         }
 
@@ -104,97 +125,51 @@ public class TicTacToeGame {
         return 1;
     }
 
-    public int getComputerMove() {
-        int move = -1;
-
-        if (mDificultyLevel == DificultyLevel.Easy) {
-            move = getRandomMove();
-        } else if (mDificultyLevel == DificultyLevel.Harder) {
-            move = getWinningMove();
-            if (move == -1) {
-                move = getRandomMove();
-            }
-        } else if (mDificultyLevel == DificultyLevel.Expert) {
-            move = getWinningMove();
-            if (move == -1) {
-                move = getBlockingMove();
-
-            }
-            if (move == -1) {
-                move = getRandomMove();
-            }
-        }
-
-        return move;
+    public char getBoardOccupant(int i){
+        if(mBoardList.get(i).equals(HUMAN_PLAYER.toString()))
+            return HUMAN_PLAYER;
+        else if(mBoardList.get(i).equals(COMPUTER_PLAYER.toString()))
+            return COMPUTER_PLAYER;
+        else return 0;
     }
 
-
-    // Generate random move
-    private int getRandomMove() {
-        int move;
-        do {
-            move = mRand.nextInt(BOARD_SIZE);
-        } while (mBoard[move] == HUMAN_PLAYER || mBoard[move] == COMPUTER_PLAYER);
-        return move;
+    public ArrayList<String> getBoardState(){
+        return mBoardList;
     }
 
-    // See if there's a move O can make to block X from winning
-    private int getBlockingMove() {
-        for (int i = 0; i < BOARD_SIZE; i++) {
-            if (mBoard[i]==OPEN_SPOT) {
-                mBoard[i]=HUMAN_PLAYER;
-                if (checkForWinner() == 2) {
-                    mBoard[i]=OPEN_SPOT;
-                    return i;
-                } else{
-                    mBoard[i]=OPEN_SPOT;
-                }
-            }
-        }
-        return -1;
+    public void setBoardState(ArrayList<String> list){
+        mBoardList = list;
     }
 
-    //See if there's a move O can make to win
-    private int getWinningMove() {
-        for (int i = 0; i < BOARD_SIZE; i++) {
-            if (mBoard[i] != HUMAN_PLAYER && mBoard[i] != COMPUTER_PLAYER) {
-                char curr = mBoard[i];
-                mBoard[i]=COMPUTER_PLAYER;
-                if (checkForWinner() == 3) {
-                    mBoard[i]=curr;
-                    return i;
-                } else {
-                    mBoard[i] = curr;
-                }
-            }
-        }
-        return -1;
+    public boolean getJ1turn(){
+        return J1turn;
     }
 
-    public void setMove(char player, int location){
-        mBoard[location] = player;
+    public void setJ1turn(boolean b){
+        J1turn = b;
     }
 
-    public void clearBoard (){
-        for (int i = 0; i < 9; i++){
-            mBoard[i] = OPEN_SPOT;
-        }
+    public boolean getGameOver() {
+        return gameOver;
     }
 
-    public char getBoardOccupant(int i) {
-        return mBoard[i];
+    public void setGameOver(boolean b){
+        gameOver = b;
     }
 
-    public void printBoard(){
-        System.out.print("[");
-        for (int i = 0; i < 9; i++){
-            System.out.print(mBoard[i] + ",");
-        }
-        System.out.println("]");
+    public boolean getP2arrived() {
+        return p2arrived;
     }
 
-    public char[] getBoardState() {
-        return this.mBoard;
+    public void setP2arrived(boolean p2arrived) {
+        this.p2arrived = p2arrived;
     }
 
+    public static String getNameGame() {
+        return nameGame;
+    }
+
+    public static void setNameGame(String nameGame) {
+        TicTacToeGame.nameGame = nameGame;
+    }
 }

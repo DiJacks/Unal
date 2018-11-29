@@ -6,9 +6,4 @@
     <item   android:id="@+id/settings"
             android:title="Settings"
             android:icon="@drawable/difficulty_level"/>
-    <item   android:id="@+id/reset_scores"
-            android:title="Reset scores"/>
-    <item   android:id="@+id/quit"
-            android:title="Quit"
-            android:icon="@drawable/quit_game"/>
 </menu>
