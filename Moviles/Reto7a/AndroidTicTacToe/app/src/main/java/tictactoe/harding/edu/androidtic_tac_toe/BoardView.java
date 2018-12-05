@@ -56,7 +56,7 @@ public class BoardView extends View {
         mPaint.setStrokeWidth(GRID_WIDTH);
 
         int cellWidth = boardWidth/3;
-        canvas.drawLine(cellWidth, 0, cellWidth, boardHeight, mPaint);
+        canvas.drawLine(cellWidth,  0, cellWidth, boardHeight, mPaint);
         canvas.drawLine(cellWidth*2, 0, cellWidth*2, boardHeight, mPaint);
 
         int cellHeight = boardHeight/3;
